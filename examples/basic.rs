@@ -8,7 +8,13 @@ use crossterm::{
 use std::io::{stdout, Write};
 
 fn setup(mut commands: Commands) {
-	commands.spawn(TermCameraComponents::default());
+	commands.spawn(TermCameraComponents {
+		camera: TermCamera {
+			sizing: TermCameraSizing::Auto,
+			..Default::default()
+		},
+		..Default::default()
+	});
 
 	for (i, (fg, bg)) in [
 		(Color::Red, Color::Black),
@@ -50,7 +56,7 @@ fn wiggle_camera(
 	let sin =
 		time.seconds_since_startup.sin() * wiggle_amount - wiggle_amount / 2.0;
 
-	for (cam, mut cam_pos) in &mut cameras.iter() {
+	for (_, mut cam_pos) in &mut cameras.iter() {
 		cam_pos.0.set_x(sin as f32);
 	}
 }

@@ -1,80 +1,63 @@
 use bevy::prelude::*;
 use crossterm::{
 	cursor, queue,
-	style::{PrintStyledContent, StyledContent},
-	terminal,
+	style::{ContentStyle, Print, StyledContent},
 };
 use std::io::{stdout, Write};
 
-use crate::{Position, ScreenPosition, TermCamera, TermRect, TermRender};
+use crate::{Position, ScreenPosition, TermCamera, TermRender};
 
-fn build_buffer(
+fn build_buffer_string(
 	cam: &TermCamera,
 	cam_pos: &Position,
-	mut renders: Query<(&TermRender, &Position)>,
-) -> crate::Buffer<char> {
-	let mut buffer = crate::Buffer::new(cam.size(), ' ');
+	renders: &mut Query<(&TermRender, &Position)>,
+) -> String {
+	let mut buffer = crate::Buffer::new(
+		cam.size(),
+		(
+			StyledContent::new(ContentStyle::default(), ' '),
+			std::f32::MIN,
+		),
+	);
 	for (render, render_pos) in &mut renders.iter() {
 		for (c, p) in render.positions() {
 			if let Some(c_pos) = (p + render_pos).camera_position(cam, cam_pos) {
-				buffer.set(&c_pos.0, c);
-			}
-		}
-	}
-	buffer
-}
-
-static REFRESH_RATE: f32 = 0.25;
-#[derive(Debug, Clone)]
-pub struct DrawTimer(pub f32);
-
-pub fn draw_cameras(
-	time: Res<Time>,
-	mut timer: ResMut<crate::DrawTimer>,
-	mut cameras: Query<(&TermCamera, &Position, &ScreenPosition)>,
-	mut renders: Query<(&TermRender, &Position)>,
-) {
-	let mut stdout = stdout();
-	queue!(stdout, terminal::Clear(terminal::ClearType::All)).unwrap();
-
-	for (camera, camera_pos, camera_screen_pos) in &mut cameras.iter() {
-		let mut depth_buffer = crate::Buffer::new(camera.size(), std::f32::MIN);
-
-		for (render, render_pos) in &mut renders.iter() {
-			for (c, p) in render.positions() {
-				// println!("cam: {:?}, char: {:?}", camera.size(), c_pos);
-				if let Some(depth_pos) =
-					(p + render_pos).camera_position(camera, camera_pos)
-				{
-					if let Some(buf_val) = depth_buffer.get(&depth_pos.0) {
-						// if buf_val < render_pos.0.z() {
-						let screen_pos: TermRect = depth_pos.0 + camera_screen_pos.0;
-						queue!(
-							stdout,
-							cursor::MoveTo(screen_pos.w, screen_pos.h),
-							render.write_cmd(c)
-						)
-						.unwrap();
-						depth_buffer.set(&depth_pos.0, render_pos.0.z());
-					// }
-					} else {
-						panic!(
-							"out of range of depthbuf at {:?} of size {:?}",
-							depth_pos,
-							depth_buffer.size()
-						);
-					}
-				} else {
-					panic!("Not in view of camera {:?}", render_pos);
+				let (buf_val, buf_depth) = buffer.get_mut(&c_pos.0).unwrap();
+				if *buf_depth < render_pos.0.z() {
+					*buf_val = StyledContent::new(render.style, c);
+					*buf_depth = render_pos.0.z();
 				}
 			}
 		}
 	}
+	buffer.map(|v| v.0).to_string()
+}
+
+pub fn draw_cameras(
+	mut cameras: Query<(&TermCamera, &Position, &ScreenPosition)>,
+	mut renders: Query<(&TermRender, &Position)>,
+) {
+	let mut stdout = stdout();
+
+	for (camera, camera_pos, camera_screen_pos) in &mut cameras.iter() {
+		let buffer_string = build_buffer_string(camera, camera_pos, &mut renders);
+
+		queue!(
+			stdout,
+			cursor::MoveTo(camera_screen_pos.0.w, camera_screen_pos.0.h),
+			Print(buffer_string)
+		)
+		.unwrap();
+	}
 	stdout.flush().unwrap();
-	if timer.0 < REFRESH_RATE {
-		timer.0 += time.delta_seconds;
-		return;
-	} else {
-		timer.0 = 0.0;
+}
+
+// TODO: Currently, this doesn't work. https://github.com/bevyengine/bevy/issues/636
+pub fn handle_quit(
+	options: Res<crate::TerminalOptions>,
+	keyboard_input: Res<Input<KeyCode>>,
+) {
+	if keyboard_input.pressed(KeyCode::Q) && options.quit_on_esc {
+		crate::util::quit();
 	}
 }

@@ -1,24 +1,18 @@
-mod camera;
 mod buffer;
+mod camera;
+mod options;
 mod plugin;
 mod pos;
 mod primitives;
 mod render;
 mod systems;
+mod util;
 
-use systems::*;
-
-pub use camera::*;
 pub use buffer::*;
+pub use camera::*;
+pub use options::*;
 pub use plugin::*;
 pub use pos::*;
 pub use primitives::*;
 pub use render::*;
-
-#[cfg(test)]
-mod tests {
-	#[test]
-	fn it_works() {
-		assert_eq!(2 + 2, 4);
-	}
-}
+pub use util::*;

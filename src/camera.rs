@@ -4,9 +4,11 @@ use bevy::prelude::*;
 
 #[derive(Bundle)]
 pub struct TermCameraComponents {
-	camera: TermCamera,
-	world_position: Position,
-	screen_position: ScreenPosition,
+	pub camera: TermCamera,
+	/// The position of the camera in the 3D world
+	pub world_position: Position,
+	/// The position of the camera's top-left corner within the terminal
+	pub screen_position: ScreenPosition,
 }
 
 impl Default for TermCameraComponents {
@@ -21,7 +23,6 @@ impl Default for TermCameraComponents {
 
 #[derive(Debug, Clone)]
 pub struct TermCamera {
-	pub name: Option<String>,
 	pub sizing: TermCameraSizing,
 	pub culling: TermCameraCulling,
 }
@@ -32,8 +33,8 @@ impl TermCamera {
 			TermCameraSizing::Auto => {
 				let (term_w, term_h) = crossterm::terminal::size().unwrap();
 				TermRect {
-					w: term_w,
-					h: term_h,
+					w: term_w - 1,
+					h: term_h - 1,
 				}
 			}
 			TermCameraSizing::Fixed(size) => size,
@@ -44,7 +45,6 @@ impl TermCamera {
 impl Default for TermCamera {
 	fn default() -> Self {
 		Self {
-			name: None,
 			sizing: TermCameraSizing::Auto,
 			culling: TermCameraCulling::All,
 		}
@@ -53,7 +53,9 @@ impl Default for TermCamera {
 
 #[derive(Debug, Clone, Copy)]
 pub enum TermCameraSizing {
+	/// Camera will attempt to match the size of the terminal.
 	Auto,
+	/// Camera will maintain a fixed size.
 	Fixed(TermRect),
 }
 
