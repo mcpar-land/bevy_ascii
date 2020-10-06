@@ -8,6 +8,7 @@ A library for making terminal-based games in the style of Dwarf Fortress.
 
 # To do
 
+- [ ] **Performance!** Right now performance is really awful. Some sort of way to utilize a GPU would be cool.
 - [ ] Write documentation
 - [ ] Add 'background inheritance,' where the nearest background color is applied if there are characters above it with no background set.
 - [ ] add more examples to test complex functionality
