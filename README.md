@@ -8,7 +8,7 @@ A library for making terminal-based games in the style of Dwarf Fortress.
 
 # To do
 
-- [ ] **Performance!** Right now performance is really awful. Some sort of way to utilize a GPU would be cool.
+- [ ] **Performance!** Right now performance is really awful. Using the GPU with [emu](https://github.com/calebwin/emu) is the goal.
 - [ ] Write documentation
 - [ ] Add 'background inheritance,' where the nearest background color is applied if there are characters above it with no background set.
 - [ ] add more examples to test complex functionality
