@@ -1,3 +1,4 @@
+/// Simple `w` x `h` primitive for screen-space coordinates
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub struct TermRect {
 	/// Width

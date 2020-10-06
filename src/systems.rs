@@ -33,19 +33,29 @@ fn build_buffer_string(
 	buffer.map(|v| v.0).to_string()
 }
 
-pub fn draw_cameras(
+pub fn render(
 	mut cameras: Query<(&TermCamera, &Position, &ScreenPosition)>,
-	mut renders: Query<(&TermRender, &Position)>,
+	mut world_renders: Query<(&TermRender, &Position)>,
+	mut screen_renders: Query<(&TermRender, &ScreenPosition)>,
 ) {
 	let mut stdout = stdout();
 
 	for (camera, camera_pos, camera_screen_pos) in &mut cameras.iter() {
-		let buffer_string = build_buffer_string(camera, camera_pos, &mut renders);
+		let buffer_string =
+			build_buffer_string(camera, camera_pos, &mut world_renders);
 
 		queue!(
 			stdout,
 			cursor::MoveTo(camera_screen_pos.0.w, camera_screen_pos.0.h),
 			Print(buffer_string)
+		)
+		.unwrap();
+	}
+	for (render, render_pos) in &mut screen_renders.iter() {
+		queue!(
+			stdout,
+			cursor::MoveTo(render_pos.0.w, render_pos.0.h),
+			render.write_cmd()
 		)
 		.unwrap();
 	}

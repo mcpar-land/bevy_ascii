@@ -2,6 +2,7 @@ use crate::TermRect;
 use bevy::prelude::*;
 
 /// Component for giving an entity a position in 3d space.
+///
 /// Consider it to be `Transform` without the rotation or scale capabilities.
 #[derive(Debug, Clone)]
 pub struct Position(pub Vec3);
@@ -57,7 +58,8 @@ impl std::ops::Add<&Position> for Position {
 	}
 }
 
-/// Similar to `Position`, but for locations within screen space.
+/// Similar to [Position](struct.Position.html), but for locations within screen space.
+///
 /// Used to put an entity in a location on-screen, rather than in the world.
 /// Does not require a camera to view.
 #[derive(Debug, Clone)]

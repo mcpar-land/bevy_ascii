@@ -2,10 +2,18 @@ use crate::Position;
 use bevy::prelude::*;
 use crossterm::style::{ContentStyle, PrintStyledContent, StyledContent};
 
+/// Bundle to display a [TermRender](struct.TermRender.html) in world space
 #[derive(Bundle)]
-pub struct TermRenderComponents {
-	pub c: TermRender,
+pub struct TermRenderWorldBundle {
+	pub render: TermRender,
 	pub position: crate::Position,
+}
+
+/// budnle to display a [TermRender](struct.TermRender.html) in screen space
+#[derive(Bundle)]
+pub struct TermRenderScreenBundle {
+	pub render: TermRender,
+	pub position: crate::ScreenPosition,
 }
 
 pub struct TermRender {
@@ -21,8 +29,8 @@ impl TermRender {
 		}
 	}
 
-	pub fn write_cmd(&self, c: char) -> PrintStyledContent<char> {
-		let styled = StyledContent::new(self.style, c);
+	pub fn write_cmd(&self) -> PrintStyledContent<String> {
+		let styled = StyledContent::new(self.style, self.body.clone());
 		PrintStyledContent(styled)
 	}
 	pub fn positions_rect(&self) -> Vec<(char, crate::TermRect)> {

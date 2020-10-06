@@ -16,6 +16,7 @@ fn startup() {
 	terminal::enable_raw_mode().unwrap();
 }
 
+/// Core plugin for the library
 pub struct TermPlugin;
 
 impl Plugin for TermPlugin {
@@ -37,7 +38,7 @@ impl Plugin for TermPlugin {
 			.add_resource(crate::TerminalOptions::default())
 			.add_startup_system(startup.system())
 			.add_system(crate::events::event_producer.system())
-			.add_system(draw_cameras.system())
+			.add_system(render.system())
 			.add_system(handle_quit.system());
 	}
 }

@@ -1,11 +1,5 @@
 use bevy::prelude::*;
 use bevy_ascii::*;
-use crossterm::{
-	execute,
-	style::{Color, ContentStyle},
-	terminal,
-};
-use std::io::{stdout, Write};
 
 // Bevy keyboard events require a window to be present.
 // Instead, we use crossterm's event system.
@@ -13,8 +7,8 @@ use std::io::{stdout, Write};
 fn setup(mut commands: Commands) {
 	commands.spawn(TermCameraComponents::default());
 
-	commands.spawn(TermRenderComponents {
-		c: TermRender {
+	commands.spawn(TermRenderWorldBundle {
+		render: TermRender {
 			body: String::from("? ctrl: _, alt: _"),
 			..Default::default()
 		},
@@ -51,5 +45,4 @@ fn main() {
 		.add_startup_system(setup.system())
 		.add_system(handle_keyboard.system())
 		.run();
-	execute!(stdout(), terminal::LeaveAlternateScreen).unwrap();
 }

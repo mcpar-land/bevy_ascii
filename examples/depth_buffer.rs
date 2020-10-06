@@ -1,11 +1,5 @@
 use bevy::prelude::*;
 use bevy_ascii::*;
-use crossterm::{
-	execute,
-	style::{Color, ContentStyle},
-	terminal,
-};
-use std::io::{stdout, Write};
 
 pub struct Speed(pub f32);
 pub struct Wiggle;
@@ -23,26 +17,26 @@ fn setup(mut commands: Commands) {
 		"+---+---+\n"
 	);
 
-	let a = TermRenderComponents {
-		c: TermRender {
+	let a = TermRenderWorldBundle {
+		render: TermRender {
 			body: String::from(a_str),
 			style: ContentStyle::new()
-				.foreground(Color::Black)
-				.background(Color::White),
+				.foreground(TermColor::Black)
+				.background(TermColor::White),
 		},
 		position: Position(Vec3::new(0.0, 0.0, -10.0)),
 	};
-	let b = TermRenderComponents {
-		c: TermRender {
+	let b = TermRenderWorldBundle {
+		render: TermRender {
 			body: String::from(b_str),
-			style: ContentStyle::new().foreground(Color::Magenta),
+			style: ContentStyle::new().foreground(TermColor::Magenta),
 		},
 		position: Position(Vec3::new(0.0, 1.0, 0.0)),
 	};
-	let c = TermRenderComponents {
-		c: TermRender {
+	let c = TermRenderWorldBundle {
+		render: TermRender {
 			body: String::from(c_str),
-			style: ContentStyle::new().foreground(Color::Red),
+			style: ContentStyle::new().foreground(TermColor::Red),
 		},
 		position: Position(Vec3::new(0.0, 0.0, 10.0)),
 	};
@@ -76,5 +70,4 @@ fn main() {
 		.add_system(wiggle_up_down.system())
 		.add_system(slide_to_the_left.system())
 		.run();
-	execute!(stdout(), terminal::LeaveAlternateScreen).unwrap();
 }
