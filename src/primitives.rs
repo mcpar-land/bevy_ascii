@@ -1,17 +1,14 @@
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub struct TermRect {
 	/// Width
-	pub w: i32,
+	pub w: u16,
 	/// Height
-	pub h: i32,
+	pub h: u16,
 }
 
 impl TermRect {
-	pub fn add(&self, val: i32) -> TermRect {
-		TermRect {
-			w: self.w + val,
-			h: self.h + val,
-		}
+	pub fn is_inside(&self, container: &TermRect) -> bool {
+		self.w <= container.w && self.h <= container.h
 	}
 }
 
@@ -30,14 +27,17 @@ impl std::ops::Sub for TermRect {
 	type Output = TermRect;
 
 	fn sub(self, rhs: Self) -> Self::Output {
-		self + (rhs * -1)
+		TermRect {
+			w: self.w - rhs.w,
+			h: self.h - rhs.h,
+		}
 	}
 }
 
-impl std::ops::Add<i32> for TermRect {
+impl std::ops::Add<u16> for TermRect {
 	type Output = TermRect;
 
-	fn add(self, rhs: i32) -> Self::Output {
+	fn add(self, rhs: u16) -> Self::Output {
 		TermRect {
 			w: self.w + rhs,
 			h: self.h + rhs,
@@ -45,10 +45,10 @@ impl std::ops::Add<i32> for TermRect {
 	}
 }
 
-impl std::ops::Sub<i32> for TermRect {
+impl std::ops::Sub<u16> for TermRect {
 	type Output = TermRect;
 
-	fn sub(self, rhs: i32) -> Self::Output {
+	fn sub(self, rhs: u16) -> Self::Output {
 		TermRect {
 			w: self.w - rhs,
 			h: self.h - rhs,
@@ -56,10 +56,10 @@ impl std::ops::Sub<i32> for TermRect {
 	}
 }
 
-impl std::ops::Div<i32> for TermRect {
+impl std::ops::Div<u16> for TermRect {
 	type Output = TermRect;
 
-	fn div(self, rhs: i32) -> Self::Output {
+	fn div(self, rhs: u16) -> Self::Output {
 		TermRect {
 			w: self.w / rhs,
 			h: self.h / rhs,
@@ -67,10 +67,10 @@ impl std::ops::Div<i32> for TermRect {
 	}
 }
 
-impl std::ops::Mul<i32> for TermRect {
+impl std::ops::Mul<u16> for TermRect {
 	type Output = TermRect;
 
-	fn mul(self, rhs: i32) -> Self::Output {
+	fn mul(self, rhs: u16) -> Self::Output {
 		TermRect {
 			w: self.w * rhs,
 			h: self.h * rhs,

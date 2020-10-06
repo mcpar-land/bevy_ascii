@@ -21,7 +21,7 @@ impl Plugin for TermPlugin {
 		app
 			.add_plugin(bevy::type_registry::TypeRegistryPlugin::default())
 			.add_plugin(bevy::core::CorePlugin::default())
-			.add_plugin(bevy::diagnostic::DiagnosticsPlugin::default())
+			// .add_plugin(bevy::diagnostic::DiagnosticsPlugin::default())
 			.add_plugin(bevy::input::InputPlugin::default())
 			.add_plugin(bevy::window::WindowPlugin {
 				add_primary_window: false,
@@ -31,6 +31,7 @@ impl Plugin for TermPlugin {
 			.add_plugin(bevy::scene::ScenePlugin::default())
 			.add_plugin(bevy::audio::AudioPlugin::default())
 			.add_plugin(bevy::winit::WinitPlugin::default())
+			.add_resource(crate::systems::DrawTimer(0.0))
 			.add_startup_system(startup.system())
 			.add_system(draw_cameras.system());
 	}

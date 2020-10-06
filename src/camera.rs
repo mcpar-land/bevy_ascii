@@ -32,8 +32,8 @@ impl TermCamera {
 			TermCameraSizing::Auto => {
 				let (term_w, term_h) = crossterm::terminal::size().unwrap();
 				TermRect {
-					w: term_w as i32,
-					h: term_h as i32,
+					w: term_w,
+					h: term_h,
 				}
 			}
 			TermCameraSizing::Fixed(size) => size,

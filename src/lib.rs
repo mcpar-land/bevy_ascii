@@ -1,17 +1,19 @@
 mod camera;
+mod buffer;
 mod plugin;
 mod pos;
 mod primitives;
+mod render;
 mod systems;
-mod term_char;
 
 use systems::*;
 
 pub use camera::*;
+pub use buffer::*;
 pub use plugin::*;
 pub use pos::*;
 pub use primitives::*;
-pub use term_char::*;
+pub use render::*;
 
 #[cfg(test)]
 mod tests {
