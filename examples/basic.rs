@@ -8,13 +8,7 @@ use crossterm::{
 use std::io::{stdout, Write};
 
 fn setup(mut commands: Commands) {
-	commands.spawn(TermCameraComponents {
-		camera: TermCamera {
-			sizing: TermCameraSizing::Auto,
-			..Default::default()
-		},
-		..Default::default()
-	});
+	commands.spawn(TermCameraComponents::default());
 
 	for (i, (fg, bg)) in [
 		(Color::Red, Color::Black),

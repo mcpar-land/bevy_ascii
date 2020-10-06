@@ -13,8 +13,7 @@ fn startup() {
 		crossterm::cursor::Hide
 	)
 	.unwrap();
-	// TODO: This is tied up with systems.rs:57
-	// terminal::enable_raw_mode().unwrap();
+	terminal::enable_raw_mode().unwrap();
 }
 
 pub struct TermPlugin;
@@ -34,8 +33,10 @@ impl Plugin for TermPlugin {
 			.add_plugin(bevy::scene::ScenePlugin::default())
 			.add_plugin(bevy::audio::AudioPlugin::default())
 			.add_plugin(bevy::winit::WinitPlugin::default())
+			.add_event::<crate::TermEvent>()
 			.add_resource(crate::TerminalOptions::default())
 			.add_startup_system(startup.system())
+			.add_system(crate::events::event_producer.system())
 			.add_system(draw_cameras.system())
 			.add_system(handle_quit.system());
 	}

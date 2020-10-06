@@ -4,6 +4,7 @@ A library for making terminal-based games in the style of Dwarf Fortress.
 
 - [`basic`](examples/basic.rs)
 - [`depth_buffer`](examples/depth_buffer.rs)
+- [`keyboard`](examples/keyboard.rs)
 
 # To do
 
@@ -13,4 +14,4 @@ A library for making terminal-based games in the style of Dwarf Fortress.
   - [ ] multiple cameras on-screen at once
   - [ ] camera culling based on the camera's Z location
 - [ ] Add some way to translate Bevy's UI system into terminal interface components
-- [ ] [Fix a bug with keyboard input](https://github.com/bevyengine/bevy/issues/636)
+- [x] [Fix a bug with keyboard input](https://github.com/bevyengine/bevy/issues/636)

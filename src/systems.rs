@@ -52,12 +52,18 @@ pub fn draw_cameras(
 	stdout.flush().unwrap();
 }
 
-// TODO: Currently, this doesn't work. https://github.com/bevyengine/bevy/issues/636
 pub fn handle_quit(
 	options: Res<crate::TerminalOptions>,
-	keyboard_input: Res<Input<KeyCode>>,
+	events: Res<Events<crate::TermEvent>>,
+	mut state: Local<crate::TermState>,
 ) {
-	if keyboard_input.pressed(KeyCode::Q) && options.quit_on_esc {
-		crate::util::quit();
+	if options.quit_on_esc {
+		for event in state.reader.iter(&events) {
+			if let crate::TermEvent::Key(e) = event {
+				if let crate::TermKeyCode::Esc = e.code {
+					crate::util::quit();
+				}
+			}
+		}
 	}
 }
