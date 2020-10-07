@@ -16,6 +16,7 @@ pub struct TermRenderScreenBundle {
 	pub position: crate::ScreenPosition,
 }
 
+#[derive(Clone)]
 pub struct TermRender {
 	pub body: String,
 	pub style: ContentStyle,

@@ -7,10 +7,14 @@ use std::io::{stdout, Write};
 
 use crate::{Position, ScreenPosition, TermCamera, TermRender};
 
+#[derive(Clone, Copy, Debug)]
+pub struct RendersSize(pub usize);
+
 fn build_buffer_string(
 	cam: &TermCamera,
 	cam_pos: &Position,
 	renders: &mut Query<(&TermRender, &Position)>,
+	renders_size: &mut RendersSize,
 ) -> String {
 	let mut buffer = crate::Buffer::new(
 		cam.size(),
@@ -19,6 +23,18 @@ fn build_buffer_string(
 			std::f32::MIN,
 		),
 	);
+
+	let mut bytes: usize = 0;
+
+	for (render, render_pos) in &mut renders.iter() {
+		use std::mem::size_of_val;
+		bytes += size_of_val(&*render.body);
+		bytes += size_of_val(&render.style);
+		bytes += size_of_val(&render_pos);
+	}
+
+	renders_size.0 = bytes;
+
 	for (render, render_pos) in &mut renders.iter() {
 		for (c, p) in render.positions() {
 			if let Some(c_pos) = (p + render_pos).camera_position(cam, cam_pos) {
@@ -34,6 +50,7 @@ fn build_buffer_string(
 }
 
 pub fn render(
+	mut renders_size: ResMut<RendersSize>,
 	mut cameras: Query<(&TermCamera, &Position, &ScreenPosition)>,
 	mut world_renders: Query<(&TermRender, &Position)>,
 	mut screen_renders: Query<(&TermRender, &ScreenPosition)>,
@@ -41,8 +58,12 @@ pub fn render(
 	let mut stdout = stdout();
 
 	for (camera, camera_pos, camera_screen_pos) in &mut cameras.iter() {
-		let buffer_string =
-			build_buffer_string(camera, camera_pos, &mut world_renders);
+		let buffer_string = build_buffer_string(
+			camera,
+			camera_pos,
+			&mut world_renders,
+			&mut renders_size,
+		);
 
 		queue!(
 			stdout,
@@ -60,20 +81,4 @@ pub fn render(
 		.unwrap();
 	}
 	stdout.flush().unwrap();
-}
-
-pub fn handle_quit(
-	options: Res<crate::TerminalOptions>,
-	events: Res<Events<crate::TermEvent>>,
-	mut state: Local<crate::TermState>,
-) {
-	if options.quit_on_esc {
-		for event in state.reader.iter(&events) {
-			if let crate::TermEvent::Key(e) = event {
-				if let crate::TermKeyCode::Esc = e.code {
-					crate::util::quit();
-				}
-			}
-		}
-	}
 }

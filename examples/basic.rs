@@ -22,7 +22,7 @@ fn setup(mut commands: Commands) {
 	{
 		commands.spawn(TermRenderWorldBundle {
 			render: TermRender {
-				body: format!("This is in world space! "),
+				body: format!("This is in world space! Notice how it disappears past the camera edge."),
 				style: ContentStyle::new().foreground(*fg).background(*bg),
 			},
 			position: Position(Vec3::new(i as f32, i as f32, 0.0)),
