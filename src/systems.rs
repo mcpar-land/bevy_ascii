@@ -50,6 +50,8 @@ fn build_buffer_string(
 }
 
 pub fn render(
+	mut time: Res<Time>,
+	mut options: Res<crate::TerminalOptions>,
 	mut renders_size: ResMut<RendersSize>,
 	mut cameras: Query<(&TermCamera, &Position, &ScreenPosition)>,
 	mut world_renders: Query<(&TermRender, &Position)>,
@@ -77,6 +79,17 @@ pub fn render(
 			stdout,
 			cursor::MoveTo(render_pos.0.w, render_pos.0.h),
 			render.write_cmd()
+		)
+		.unwrap();
+	}
+	if options.display_fps_counter {
+		queue!(
+			stdout,
+			cursor::MoveTo(0, 0),
+			crossterm::style::Print(format!(
+				"FPS {:.1}",
+				1.0 / time.delta_seconds_f64
+			))
 		)
 		.unwrap();
 	}

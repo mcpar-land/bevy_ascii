@@ -4,7 +4,8 @@ use bevy_ascii::*;
 pub struct Speed(pub f32);
 pub struct Wiggle;
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, mut options: ResMut<TerminalOptions>) {
+	options.display_fps_counter = true;
 	commands.spawn(TermCameraComponents::default());
 
 	let a_str = "0000\n0000\n0000\n0000";

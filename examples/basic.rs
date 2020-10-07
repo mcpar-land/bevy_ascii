@@ -1,9 +1,8 @@
 use bevy::prelude::*;
 use bevy_ascii::*;
 
-struct Tracker;
-
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, mut options: ResMut<TerminalOptions>) {
+	options.display_fps_counter = true;
 	commands.spawn(TermCameraComponents::default());
 
 	for (i, (fg, bg)) in [
@@ -45,8 +44,7 @@ fn setup(mut commands: Commands) {
 			},
 			position: Position(Vec3::new(-10.0, -5.0, 0.0)),
 		})
-		.with(ScreenPosition(TermRect { w: 20, h: 8 }))
-		.with(Tracker);
+		.with(ScreenPosition(TermRect { w: 20, h: 8 }));
 }
 
 fn wiggle_camera(
@@ -62,18 +60,10 @@ fn wiggle_camera(
 	}
 }
 
-fn print_time(time: Res<Time>, mut render: Mut<TermRender>, _: &Tracker) {
-	render.body = format!(
-		"This is in both screen and world space! delta time: {:.2}",
-		time.delta_seconds
-	);
-}
-
 fn main() {
 	App::build()
 		.add_plugin(TermPlugin)
 		.add_startup_system(setup.system())
 		.add_system(wiggle_camera.system())
-		.add_system(print_time.system())
 		.run();
 }

@@ -4,7 +4,8 @@ use bevy_ascii::*;
 // Bevy keyboard events require a window to be present.
 // Instead, we use crossterm's event system.
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, mut options: ResMut<TerminalOptions>) {
+	options.display_fps_counter = true;
 	commands.spawn(TermCameraComponents::default());
 
 	commands.spawn(TermRenderWorldBundle {
